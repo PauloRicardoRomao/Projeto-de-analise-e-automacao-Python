@@ -1,8 +1,9 @@
 import pandas as pd
 import openpyxl
+import win32com.client as win32
 
 #Importar base de dados
-tabela_vendas = pd.read_excel('vendas.xlsx')
+tabela_vendas = pd.read_excel('Vendas.xlsx')
 
 #Visualizar base de dados
 pd.set_option('display.max_columns', None)
@@ -26,3 +27,32 @@ ticket_medio = (faturamento['Valor Final']/quantidade_produto['Quantidade']).to_
 print(round(ticket_medio,3))
 
 #Enviar email com relatorio
+
+
+outlook = win32.Dispath('outlook.application')
+mail = outlook.CreateItem(0)
+mail.To = 'paulooorrs@gmail.com'
+mail.Subject = 'Relatório de vendas por loja.'
+mail.HTMLBody = f'''
+<p>Prezados,</p>
+
+<p>Segue o Relatório de Vendas por cada Loja.</p>
+
+<p>Faturamento:</p>
+{faturamento}
+
+<p>Quantidade Vendida:</p>
+{quantidade_produto}
+
+<p>Ticket Médio dos Produtos em cada Loja</p>
+{ticket_medio}
+
+<p>Qualquer dúvida estou à disposição.</p>
+
+<p>Att.,</p>
+<p>Paulo</p>
+'''
+
+mail.Send()
+
+print("EMAIL ENVIADO.")
